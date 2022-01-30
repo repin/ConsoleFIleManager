@@ -67,10 +67,11 @@ namespace ConsoleFIleManager
                         return result;
 
                     case "rm":
-                     //   result = Delete(comSplit[1]);
+                        result = Delete(comSplit[1]);
+                        return result;
                         break;
                     case "file":
-
+                        return 0;
                         break;
                     case "cp":
                         result = Copy(comSplit[1], comSplit[2]);
@@ -81,15 +82,53 @@ namespace ConsoleFIleManager
                         return -1;
                 }
             }
-            return 0;
 
         }
-        /// <summary>
-        /// КОпирование файлов или папок из path в pathTarget
-        /// </summary>
-        /// <param name="path"></param>
-        /// <param name="pathTarget"></param>
-        /// <returns></returns>
+
+        private int Delete(string path)
+        {
+            int t = FileOrDirectory(path);
+            if (t == -1)
+            {
+                return -1;
+            }
+            else if (t == 1)
+            {
+                DelFile(path);
+            }
+            else
+            {
+                DelDir(path);
+            }
+            return 0;
+        }
+
+        private void DelDir(string path)
+        {
+            var pathsInDir = Directory.EnumerateFileSystemEntries(path);
+            foreach(string anyPath in pathsInDir)
+            {
+                int k = FileOrDirectory(anyPath);
+                if (k == 1)
+                {
+                    DelFile(anyPath);
+                }
+                else
+                {
+                    DelDir(anyPath);
+                }
+            }
+            Directory.Delete(path);
+            return;
+        }
+
+        private void DelFile(string path)
+        {
+            File.Delete(path);
+        }
+
+
+
         private int Copy(string path, string pathTarget)
         {
             int t = FileOrDirectory(path);
@@ -216,16 +255,6 @@ namespace ConsoleFIleManager
             }
         }
 
-        private string[] intDirectoryTree(string currentDir)
-        {
-            string[] none = new string[5];
-            return none;
-        }
-
-        private int DirectoryInfo(string dirPath)
-        {
-            return 0;
-        }
         private void ConsoleError(int error)
         {
             switch (error) 
