@@ -51,9 +51,9 @@ namespace ConsoleFIleManager
         /// </returns>
         public int CommandRead(string command)
         {
-            int result = 0;
+            int result;
             string[] comSplit = command.Split(" ");
-            if (comSplit.Length == 1 && comSplit.Length > 4)
+            if (comSplit.Length == 1 || comSplit.Length > 4)
             {
                 ConsoleError(-1);
                 return -1;
@@ -67,7 +67,7 @@ namespace ConsoleFIleManager
                         return result;
 
                     case "rm":
-
+                     //   result = Delete(comSplit[1]);
                         break;
                     case "file":
 
@@ -99,49 +99,48 @@ namespace ConsoleFIleManager
             }
             else if (t == 1)
             {
-                CopyFilePath(path,pathTarget);
+                CopyFile(path,pathTarget);
             }
             else
             {
-                CopyDirPath(path, pathTarget);
+                CopyDir(path, pathTarget);
             }
            
             return 0;
         }
 
-        private int CopyDirPath(string path, string pathTarget)
+        private int CopyDir(string path, string pathTarget)
         {
-            var pathTree = Directory.EnumerateFileSystemEntries(path, "", SearchOption.AllDirectories);
-            string pathParentPath = Path.GetDirectoryName(path);
-            int parentPathLenght = pathParentPath.Length;
-            foreach (string h in pathTree)
+            string directoryName = Path.GetFileName(path);
+            string newNameDirectory = Path.Combine(pathTarget, directoryName);
+            try
             {
-                try
-                {
-                    int lenghtSP = path.Length;
-                    int t = FileOrDirectory(h);
-                    if (t == 1)
-                    {
-                        string pathTargetFile = string.Concat(pathTarget, h.Remove(0, lenghtSP));
-                        CopyFilePath(h, pathTargetFile);
-                    }
-                    else if (t == 2)
-                    {
-                        string directoryCreateName = string.Concat(pathTarget, path.Remove(0, lenghtSP));
-                        Directory.CreateDirectory(directoryCreateName);
-                    }
-                }
-                catch(Exception ex)
-                {
-                    Console.WriteLine(ex.ToString());
-                    return -1;
-                }
-
+                Directory.CreateDirectory(newNameDirectory);
             }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.ToString());
+            }
+            var pathInDir = Directory.EnumerateFileSystemEntries(path);
+            foreach (string pathsInDirectory in pathInDir)
+            {
+                if (FileOrDirectory(pathsInDirectory) == 1)
+                {
+                    string nameFile = Path.GetFileName(pathsInDirectory);
+                    nameFile = Path.Combine(newNameDirectory, nameFile);
+                    CopyFile(pathsInDirectory, nameFile);
+                }
+                else
+                {
+                    CopyDir(pathsInDirectory,newNameDirectory);
+                }
+            }
+
+
             return 1;
         }
 
-        private int CopyFilePath(string pathFile, string pathTarget)
+        private int CopyFile(string pathFile, string pathTarget)
         {
             try
             {
@@ -221,31 +220,6 @@ namespace ConsoleFIleManager
         {
             string[] none = new string[5];
             return none;
-        }
-
-        private int CopyDip (string currentDir)
-        {
-            return 0;
-        }
-
-        private int CopiFile(string file)
-        {
-            return 0;
-        }
-
-        private int FullDelDir(string dir)
-        {
-            return 0;
-        }
-
-        private int delFile(string file)
-        {
-            return 0;
-        }
-
-        private int FileInfo(string filePath)
-        {
-            return 0;
         }
 
         private int DirectoryInfo(string dirPath)
