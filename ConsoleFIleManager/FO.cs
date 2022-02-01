@@ -71,7 +71,8 @@ namespace ConsoleFIleManager
                         return result;
                         break;
                     case "file":
-                        return 0;
+                        result = FileInfo(comSplit[1]);
+                        return result;
                         break;
                     case "cp":
                         result = Copy(comSplit[1], comSplit[2]);
@@ -83,6 +84,28 @@ namespace ConsoleFIleManager
                 }
             }
 
+        }
+
+        private int FileInfo(string path)
+        {
+            int k = FileOrDirectory(path);
+            if (k == 1)
+            {
+                FileInfo file = new FileInfo(path);
+                string fileInfo = $"Информация о файле {Path.GetFileName(path)}" + Environment.NewLine;
+                fileInfo = string.Concat(fileInfo, $"Размер файла {file.Length} байт" + Environment.NewLine);
+                fileInfo = string.Concat(fileInfo, $"Запрет на редактирование: {file.IsReadOnly}" + Environment.NewLine);
+                fileInfo = string.Concat(fileInfo, $"Дата создания: {file.CreationTime}" + Environment.NewLine);
+                fileInfo = string.Concat(fileInfo, $"Дата последнего изменения: {file.LastWriteTime}" + Environment.NewLine);
+                fileInfo = string.Concat(fileInfo, $"Дата последнего открытия: {file.LastAccessTime}" + Environment.NewLine);
+                Console.WriteLine(fileInfo);
+                return 0;
+            }
+            else
+            {
+                return -1;
+            }
+            
         }
 
         private int Delete(string path)
@@ -126,8 +149,6 @@ namespace ConsoleFIleManager
         {
             File.Delete(path);
         }
-
-
 
         private int Copy(string path, string pathTarget)
         {
