@@ -63,8 +63,18 @@ namespace ConsoleFIleManager
                 switch (comSplit[0])
                 {
                     case "ls":
-                        result = GetTreePath(comSplit[1]); 
-                        return result;
+                        if (comSplit.Length == 2)
+                        {
+                            result = GetTreePath(comSplit[1]);
+                            return result;
+                        }
+                        else if (comSplit.Length ==4 && comSplit[2]=="-p")
+                        {
+                            result = GetTreePath(comSplit[1], comSplit[3]);
+                            return result;
+                        }
+                        return -1;
+
 
                     case "rm":
                         result = Delete(comSplit[1]);
@@ -77,6 +87,10 @@ namespace ConsoleFIleManager
                     case "cp":
                         result = Copy(comSplit[1], comSplit[2]);
                         return result;
+                    case "exit":
+                        exit = true;
+                        return 0;
+                        break;
 
                     default:
                         ConsoleError(-1);
@@ -84,6 +98,27 @@ namespace ConsoleFIleManager
                 }
             }
 
+        }
+
+        private int GetTreePath(string path, string nList="1")
+        {
+            int n = int.Parse(nList);
+            string[] pathlist = Directory.GetDirectories(path);
+            if (pathlist.Length < n * 10)
+            {
+                lstDir = new string[10];
+                ConsoleError(-2);
+                return -1;
+            }
+            string[] newPathList = new string[10];
+            int k = 0;
+            for (int i=n-1; i < pathlist.Length && i<n+9; i++)
+            {
+                newPathList[k] = pathlist[i];
+                k++;
+            }
+            lstDir = newPathList;
+            return 0;
         }
 
         private int FileInfo(string path)
@@ -223,31 +258,6 @@ namespace ConsoleFIleManager
         /// -1 - путь не является директорией,
         /// 1 - добавление данных в переменную прошло успешно.
         /// </returns>
-        private int GetTreePath(string path)
-        {
-            int WhatThis = FileOrDirectory(path);
-            switch (WhatThis)
-            {
-                case -1:
-                    return -1;
-                case 1:
-                    return -1;
-                case 2:
-                    try
-                    {
-                        lstDir = Directory.GetDirectories(path);
-                        return 1;
-                    }
-                    catch
-                    {
-                        ConsoleError(-1);
-                        return -1;
-                    }
-                default:
-                    ConsoleError(-1);
-                    return -1;
-            }
-        }
 
         /// <summary>
         /// Метод возвращает файл или директория направленны пользователем.
@@ -282,6 +292,9 @@ namespace ConsoleFIleManager
             {
                 case -1:
                     Console.WriteLine("Неверная команда или количество аргументов, воспользуйтесь командой HELP для просмотра списка команд");
+                    break;
+                case -2:
+                    Console.WriteLine("На данном листе списка папок ничего нет, на каждом листе отображается 10 папок");
                     break;
                 default:
                     Console.WriteLine("Неизвестная ошибка");

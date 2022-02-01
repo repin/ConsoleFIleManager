@@ -28,6 +28,10 @@ namespace ConsoleFIleManager
             {
                 string command = Console.ReadLine();
                 foo.CommandRead(command);
+                foreach (string p in foo.lstDir)
+                {
+                    Console.WriteLine(p);
+                }
             }
         }
     }
