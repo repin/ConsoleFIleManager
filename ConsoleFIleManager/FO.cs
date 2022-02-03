@@ -24,21 +24,55 @@ namespace ConsoleFIleManager
         private string cu;
         private string[] listDirectory;
 
-        public string currentDir
-        {
-            get { return cu; }
-            set { cu = value; }
-        }
         public string[] lstDir
         {
             get { return listDirectory; }
             set { listDirectory = value; }
         }
+
+        public string currentDir
+        {
+            get { return cu; }
+            set { cu = value; }
+        }
+        private int nListDirectories;
+
+        public int nLstDir
+        {
+            get { return nListDirectories; }
+            set { nListDirectories = value; }
+        }
+
+        private string[] listFiles;
+
+        public string[] lstFiles
+        {
+            get { return listFiles; }
+            set { listFiles = value; }
+        }
+
+        private string ConsoleWrite;
+
+        public string cSLWRT
+        {
+            get { return ConsoleWrite; }
+            set { ConsoleWrite = value; }
+        }
+
+        private int nListDirectoryNow;
+
+        public int nListDirNow
+        {
+            get { return nListDirectoryNow; }
+            set { nListDirectoryNow = value; }
+        }
+
         public bool exit { get; set; }
 
         public FO()
         {
             exit = false;
+            GetTreePath(Directory.GetCurrentDirectory());
         }
 
         /// <summary>
@@ -68,7 +102,7 @@ namespace ConsoleFIleManager
                             result = GetTreePath(comSplit[1]);
                             return result;
                         }
-                        else if (comSplit.Length ==4 && comSplit[2]=="-p")
+                        else if (comSplit.Length == 4 && comSplit[2] == "-p")
                         {
                             result = GetTreePath(comSplit[1], comSplit[3]);
                             return result;
@@ -99,12 +133,18 @@ namespace ConsoleFIleManager
             }
 
         }
-
-        private int GetTreePath(string path, string nList="1")
+        /// <summary>
+        /// Выводит 10 папок и файлов по пути, при наличии. Поддерживает листинг папок. Листинг файлов не производится.
+        /// </summary>
+        /// <param name="path">Путь</param>
+        /// <param name="nList">Номер страницы листа</param>
+        /// <returns></returns>
+        private int GetTreePath(string path, string nList = "1")
         {
             int n = int.Parse(nList);
             string[] pathlist = Directory.GetDirectories(path);
-            if (pathlist.Length < n * 10)
+            string[] fileList = Directory.GetFiles(path);
+            if (pathlist.Length < n * 10 - 10)
             {
                 lstDir = new string[10];
                 ConsoleError(-2);
@@ -112,12 +152,24 @@ namespace ConsoleFIleManager
             }
             string[] newPathList = new string[10];
             int k = 0;
-            for (int i=n-1; i < pathlist.Length && i<n+9; i++)
+            for (int i = n - 1; i < pathlist.Length && i < n + 9; i++)
             {
                 newPathList[k] = pathlist[i];
                 k++;
             }
+            string[] newFilelist = new string[10];
+            if (fileList.Length > 0)
+            {
+                for (int i = 0; i < fileList.Length; i++)
+                {
+                    newFilelist[i] = fileList[i];
+                }
+            }
             lstDir = newPathList;
+            lstFiles = newFilelist;
+            currentDir = path;
+            nListDirNow = n;
+            nListDirectories = pathlist.Length / 10+1;
             return 0;
         }
 
@@ -140,9 +192,13 @@ namespace ConsoleFIleManager
             {
                 return -1;
             }
-            
-        }
 
+        }
+        /// <summary>
+        /// Определяет необходимо удалить файл или папку, запускает соответствующий метод.
+        /// </summary>
+        /// <param name="path">путь к файлу или папке</param>
+        /// <returns></returns>
         private int Delete(string path)
         {
             int t = FileOrDirectory(path);
@@ -161,10 +217,14 @@ namespace ConsoleFIleManager
             return 0;
         }
 
+        /// <summary>
+        /// Удаляет директорию
+        /// </summary>
+        /// <param name="path">путь к директории</param>
         private void DelDir(string path)
         {
             var pathsInDir = Directory.EnumerateFileSystemEntries(path);
-            foreach(string anyPath in pathsInDir)
+            foreach (string anyPath in pathsInDir)
             {
                 int k = FileOrDirectory(anyPath);
                 if (k == 1)
@@ -180,30 +240,46 @@ namespace ConsoleFIleManager
             return;
         }
 
+        /// <summary>
+        /// Удаляет файл
+        /// </summary>
+        /// <param name="path">Путь к файлу.</param>
         private void DelFile(string path)
         {
             File.Delete(path);
         }
 
+        /// <summary>
+        /// Определяет что необходимо скопировать файл или папку, запускает соответствующий метод.
+        /// </summary>
+        /// <param name="path">начальный путь</param>
+        /// <param name="pathTarget">конечный путь</param>
+        /// <returns></returns>
         private int Copy(string path, string pathTarget)
         {
             int t = FileOrDirectory(path);
-            if(t==-1)
+            if (t == -1)
             {
                 return -1;
             }
             else if (t == 1)
             {
-                CopyFile(path,pathTarget);
+                CopyFile(path, pathTarget);
             }
             else
             {
                 CopyDir(path, pathTarget);
             }
-           
+
             return 0;
         }
 
+        /// <summary>
+        /// Копирование директории и всего, что есть в директории.
+        /// </summary>
+        /// <param name="path">Путь к директории.</param>
+        /// <param name="pathTarget">Путь к итоговой папке.</param>
+        /// <returns></returns>
         private int CopyDir(string path, string pathTarget)
         {
             string directoryName = Path.GetFileName(path);
@@ -227,7 +303,7 @@ namespace ConsoleFIleManager
                 }
                 else
                 {
-                    CopyDir(pathsInDirectory,newNameDirectory);
+                    CopyDir(pathsInDirectory, newNameDirectory);
                 }
             }
 
@@ -235,6 +311,12 @@ namespace ConsoleFIleManager
             return 1;
         }
 
+        /// <summary>
+        /// Копирует файл.
+        /// </summary>
+        /// <param name="pathFile">Текущий путь файла.</param>
+        /// <param name="pathTarget">Путь файла после копирования.</param>
+        /// <returns></returns>
         private int CopyFile(string pathFile, string pathTarget)
         {
             try
@@ -247,17 +329,8 @@ namespace ConsoleFIleManager
                 return -1;
             }
 
-            return 0;        
+            return 0;
         }
-
-        /// <summary>
-        /// Метод возвращает в переменную listDirectory список папок по пути
-        /// </summary>
-        /// <param name="path">путь к папкам</param>
-        /// <returns>
-        /// -1 - путь не является директорией,
-        /// 1 - добавление данных в переменную прошло успешно.
-        /// </returns>
 
         /// <summary>
         /// Метод возвращает файл или директория направленны пользователем.
@@ -281,23 +354,27 @@ namespace ConsoleFIleManager
                 return 1;
             }
             else
-            {                
+            {
                 return 2;
             }
         }
 
+        /// <summary>
+        /// Выводит в поле cSLWRT сообщение об ошибке
+        /// </summary>
+        /// <param name="error"></param>
         private void ConsoleError(int error)
         {
-            switch (error) 
+            switch (error)
             {
                 case -1:
-                    Console.WriteLine("Неверная команда или количество аргументов, воспользуйтесь командой HELP для просмотра списка команд");
+                    cSLWRT = "Неверная команда или количество аргументов, воспользуйтесь командой HELP для просмотра списка команд";
                     break;
                 case -2:
-                    Console.WriteLine("На данном листе списка папок ничего нет, на каждом листе отображается 10 папок");
+                    cSLWRT = "На данном листе списка папок ничего нет, на каждом листе отображается 10 папок";
                     break;
                 default:
-                    Console.WriteLine("Неизвестная ошибка");
+                    cSLWRT = "Неизвестная ошибка";
                     break;
             }
         }
