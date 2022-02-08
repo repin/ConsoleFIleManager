@@ -10,51 +10,89 @@ namespace ConsoleFIleManager
         private string cu;
         private string[] listDirectory;
 
+        /// <summary>
+        /// Список директорий
+        /// </summary>
         public string[] lstDir
         {
             get { return listDirectory; }
             set { listDirectory = value; }
         }
 
+        /// <summary>
+        /// Текущая выбранная директория
+        /// </summary>
         public string currentDir
         {
             get { return cu; }
             set { cu = value; }
         }
+
+        /// <summary>
+        /// Количество страниц в списке директорий
+        /// </summary>
         private int nListDirectories;
 
+        /// <summary>
+        /// Количество страниц в списке директорий
+        /// </summary>
         public int nLstDir
         {
             get { return nListDirectories; }
             set { nListDirectories = value; }
         }
 
+        /// <summary>
+        /// Список файлов
+        /// </summary>
         private string[] listFiles;
 
+        /// <summary>
+        /// Список файлов
+        /// </summary>
         public string[] lstFiles
         {
             get { return listFiles; }
             set { listFiles = value; }
         }
 
+        /// <summary>
+        /// Вывод информации в консоль
+        /// </summary>
         private string ConsoleWrite;
 
+
+        /// <summary>
+        /// Вывод информации в консоль
+        /// </summary>
         public string cSLWRT
         {
             get { return ConsoleWrite; }
             set { ConsoleWrite = value; }
         }
 
+        /// <summary>
+        /// Номер текущей страницы в листинге директорий
+        /// </summary>
         private int nListDirectoryNow;
 
+        /// <summary>
+        /// Номер текущей страницы в листинге директорий
+        /// </summary>
         public int nListDirNow
         {
             get { return nListDirectoryNow; }
             set { nListDirectoryNow = value; }
         }
 
+        /// <summary>
+        /// Выход
+        /// </summary>
         public bool exit { get; set; }
 
+        /// <summary>
+        /// Конструктор класса
+        /// </summary>
         public FO()
         {
             exit = false;
