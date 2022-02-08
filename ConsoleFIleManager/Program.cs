@@ -9,21 +9,17 @@ namespace ConsoleFIleManager
 
         static void Main(string[] args)
         {
-            /*            string r = @"C:\test\source\Новый_текстовый_документ.txt";
-                        string k = "Kakaka";
-                        FileInfo st = new FileInfo(r);
-                        string t = st.IsReadOnly.ToString() + Environment.NewLine;
-                        t = string.Concat(t, st.Attributes.ToString() + Environment.NewLine);
-                        t = string.Concat(t, st.CreationTime.ToString() + Environment.NewLine);
-                        t = string.Concat(t, st.Extension.ToString() + Environment.NewLine);
-                        t = string.Concat(t, st.LastAccessTime.ToString() + Environment.NewLine);
-                        t = string.Concat(t, st.LastWriteTime.ToString() + Environment.NewLine);
-                        t = string.Concat(t, st.Length.ToString() + Environment.NewLine);
-                        Console.WriteLine(t);
-                        return;*/
-
+            string pathFile = "FOCurrentPath.ini";
+            bool k = File.Exists(pathFile);
             FO foo = new FO();
+            if (k)
+            {
+                string lastUsePath = File.ReadAllText(pathFile);
+                foo.currentDir = lastUsePath;
+            }
+            foo.CommandRead($"ls {foo.currentDir}");
             UIO ui = new UIO(foo);
+
             while (foo.exit == false)
             {
 
@@ -31,6 +27,7 @@ namespace ConsoleFIleManager
                 foo.CommandRead(command);
                 ui.Update();
             }
+            File.WriteAllText(pathFile, foo.currentDir);
         }
     }
 }

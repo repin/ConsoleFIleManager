@@ -20,17 +20,20 @@ namespace ConsoleFIleManager
 
         public void ConstrConsole()
         {
-            
+
         }
 
         internal void Update()
         {
             Console.Clear();
-            Console.WriteLine($"Список директорий, лист {fo.nListDirNow} из {fo.nLstDir}");
+            Console.WriteLine($"==================Список директорий, лист {fo.nListDirNow} из {fo.nLstDir}=============================");
             DisplData(fo.lstDir);
-            Console.WriteLine("Список файлов++++++++++++++++++++++++++++++++++++++++");
+            Console.WriteLine("=================================Список файлов================================");
             DisplData(fo.lstFiles);
+            Console.WriteLine("=============================Отчет по операции================================");
+            Console.WriteLine(fo.cSLWRT);
             Console.Write($"{fo.currentDir}>");
+
 
         }
 
