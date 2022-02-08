@@ -30,7 +30,8 @@
 При повторном открытии файлового менеджера происходит автоматический переход к папке, на которой находился указатель при закрытии.
 
 Окно файлового менеджера:  
-![screen](https://user-images.githubusercontent.com/1646007/153059017-82830921-af0a-4d66-9328-3d874350c459.png)
+![screen](https://user-images.githubusercontent.com/1646007/153059017-82830921-af0a-4d66-9328-3d874350c459.png)  
+![screen2](https://user-images.githubusercontent.com/1646007/153062852-b057ceeb-0f46-40f9-beb2-bb3212643b5e.png)
 
 В случае появления ошибок (исключений) во время выполнения программы они записываются в файл errors/random_name_exception.txt в папке приложения.
 
