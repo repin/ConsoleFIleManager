@@ -8,8 +8,10 @@ namespace ConsoleFIleManager
     {
         private FO fo { get; set; }
 
-
-
+        /// <summary>
+        /// Конструктор класса, формирует размер консоли и запускает обновление данных
+        /// </summary>
+        /// <param name="foo">экземляр Fo</param>
         public UIO(FO foo)
         {
             fo = foo;
@@ -18,11 +20,10 @@ namespace ConsoleFIleManager
             Update();
         }
 
-        public void ConstrConsole()
-        {
 
-        }
-
+        /// <summary>
+        /// Вывод данных в консоль
+        /// </summary>
         internal void Update()
         {
             Console.Clear();
@@ -36,7 +37,10 @@ namespace ConsoleFIleManager
 
 
         }
-
+        /// <summary>
+        /// Увеличивает размер массива для отображения до 10 элементов в случае, если размер массива менее 10. Позволяет сохранить компоновку окна
+        /// </summary>
+        /// <param name="lstDir">массив элементов для вывода на экран</param>
         private void DisplData(string[] lstDir)
         {
             int kLst = 0;
